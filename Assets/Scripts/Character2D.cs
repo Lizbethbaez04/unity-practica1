@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(SpriteRenderer))]
+[RequireComponent(typeof(Rigidbody2D))]
+
 public class Character2D : MonoBehaviour
 {
     Animator anim;
@@ -46,6 +50,7 @@ public class Character2D : MonoBehaviour
     {
         Debug.Log(rb2D.velocity.y);
         anim.SetFloat("velocityY", rb2D.velocity.y);
+        anim.SetBool("ground", IsGrounding);
     }
 
     Vector2 Axis
@@ -64,5 +69,16 @@ public class Character2D : MonoBehaviour
     {
         Gizmos.color = rayColor;
         Gizmos.DrawRay(transform.position, Vector2.down * rayDistance);
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if(other.CompareTag("Coin"))
+        {
+            Coin coin = other.GetComponent<Coin>();
+            Gamemanager.instance.GetScore.AddPoints(coin.Points);
+            Destroy(other.gameObject);
+            //Debug.Log(coin.Points);
+        }
     }
 }
